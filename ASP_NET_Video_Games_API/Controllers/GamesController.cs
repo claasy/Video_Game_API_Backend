@@ -41,13 +41,29 @@ namespace ASP_NET_Video_Games_API.Controllers
 
         }
 
-        //[HttpGet]
+        [HttpGet]
 
-        //public IActionResult GetGames()
-        //{
-        //    var videoGames = _context.VideoGames;
-        //    return Ok(videoGames);
-        //}
+        public IActionResult GetGames()
+        {
+            var videoGames = _context.VideoGames;
+            return Ok(videoGames);
+        }
 
+
+        [HttpGet("gamesByConsole")]
+
+        public IActionResult GetSalesByConsole()
+        {
+
+            var consoles = _context.VideoGames.Select(c => c.Platform).Distinct();
+
+            Dictionary<string, double> returnValue = new Dictionary<string, double>();
+            foreach (string Platform in consoles.ToList())
+            {
+                var salesPerConsole = _context.VideoGames.Where(i => i.Platform == Platform).Where(vg => vg.Year > 2013).Select(i => i.GlobalSales).Sum();
+                returnValue.Add(Platform, salesPerConsole);
+            }
+            return Ok(returnValue);
+        }
     }
 }
